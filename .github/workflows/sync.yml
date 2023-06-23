@@ -1,0 +1,41 @@
+name: Scheduled Sync
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+    schedule:
+        - cron: "0 * * * *"
+
+concurrency:
+    group: scheduled-sync
+
+env:
+    RCLONE_CONFIG: ${{ secrets.RCLONE_CONFIG }}
+    RCLONE_CONFIG_PATH: rclone.conf
+
+jobs:
+    check-rss-for-new-content:
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout Repo
+              uses: actions/checkout@v3
+
+            - name: Setup python-3.10
+              uses: actions/setup-python@v4
+
+            - name: Setup rclone
+              run: |
+                  sudo -v ; curl https://rclone.org/install.sh | sudo bash
+                  echo "$RCLONE_CONFIG" > $RCLONE_CONFIG_PATH
+
+            - name: Install requirements
+              run: |
+                  python3 -m pip install -r requirements.txt
+
+            - name: Run sync script
+              continue-on-error: true
+              timeout-minutes: 330
+              run: |
+                  python3 main.py

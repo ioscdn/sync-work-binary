@@ -17,15 +17,8 @@ RCLONE_COMMANDS = []
 RCLONE_CONFIG_PATH = os.getenv("RCLONE_CONFIG_PATH", False)
 
 try:
-    count = 1
-    while count:
-        rclone_cmd = os.getenv(f"RCLONE_CMD_{count}")
-        if rclone_cmd:
-            log.debug(f"Found rclone command{count}: {rclone_cmd}")
-            RCLONE_COMMANDS.append(rclone_cmd)
-            count += 1
-        else:
-            count = 0
+    _rclone_commands = os.getenv("RCLONE_COMMANDS", "").split("\n")
+    RCLONE_COMMANDS = [cmd for cmd in _rclone_commands if cmd.strip() != ""]
     log.debug(f"Found {RCLONE_COMMANDS} rclone commands")
 except Exception as e:
     log.error(e)
@@ -33,7 +26,6 @@ except Exception as e:
 
 
 def rclone(args):
-    log.debug(f"Running rclone {' '.join(args)}")
     if RCLONE_CONFIG_PATH:
         args = ["--config", RCLONE_CONFIG_PATH, *args]
     log.debug(f"Running rclone {' '.join(args)}")
@@ -48,13 +40,13 @@ def main():
     total_cmd = len(RCLONE_COMMANDS)
     success = 0
     for i, cmd in enumerate(RCLONE_COMMANDS):
-        log.info(f"Running command [{i+1}/{total_cmd}]")
+        log.info(f"[{i+1}/{total_cmd}] Running rclone command")
         cmd_code = rclone(cmd.split(" "))
         if cmd_code != 0:
-            log.error(f"Command [{i+1}/{total_cmd}] failed")
+            log.error(f"[{i+1}/{total_cmd}] Command failed")
         else:
             success += 1
-            log.info(f"Command [{i+1}/{total_cmd}] finished successfully")
+            log.info(f"[{i+1}/{total_cmd}] Command finished successfully")
     log.info(f"Finished [{success}/{total_cmd}] commands successfully")
 
 

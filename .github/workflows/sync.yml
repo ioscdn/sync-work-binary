@@ -14,6 +14,7 @@ concurrency:
 env:
     RCLONE_CONFIG: ${{ secrets.RCLONE_CONFIG }}
     RCLONE_CONFIG_PATH: rclone.conf
+    RCLONE_COMMANDS: ${{ secrets.RCLONE_COMMANDS || vars.RCLONE_COMMANDS }}
 
 jobs:
     check-rss-for-new-content:

@@ -15,6 +15,7 @@ env:
     RCLONE_CONFIG: ${{ secrets.RCLONE_CONFIG }}
     RCLONE_CONFIG_PATH: rclone.conf
     RCLONE_COMMANDS: ${{ secrets.RCLONE_COMMANDS || vars.RCLONE_COMMANDS }}
+    DEBUG: ${{ secrets.DEBUG || vars.DEBUG }}
 
 jobs:
     check-rss-for-new-content:
@@ -36,7 +37,6 @@ jobs:
                   python3 -m pip install -r requirements.txt
 
             - name: Run sync script
-              continue-on-error: true
               timeout-minutes: 330
               run: |
                   python3 main.py

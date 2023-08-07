@@ -18,7 +18,7 @@ env:
     DEBUG: ${{ secrets.DEBUG || vars.DEBUG }}
 
 jobs:
-    check-rss-for-new-content:
+    run-rclone-commands:
         runs-on: ubuntu-22.04
         steps:
             - name: Checkout Repo
